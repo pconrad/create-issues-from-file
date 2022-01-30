@@ -2,6 +2,7 @@ name: Create Issue From File Example Command
 on:
   repository_dispatch:
     types: [ciff-example-command]
+  workflow_dispatch:
 jobs:
   createIssueFromFile:
     runs-on: ubuntu-latest
