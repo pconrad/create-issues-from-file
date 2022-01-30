@@ -37,12 +37,12 @@ jobs:
           assignees: peter-evans
 
       # Test update
-      - name: Create Issue From File
+      - name: Update Issue From File
         uses: ./
         with:
           issue-number: ${{ steps.ciff.outputs.issue-number }}
-          title: An example issue
-          content-filepath: ./example-content/output.md
+          title: An UPDATED example issue
+          content-filepath: ./example-content/update.md
           labels: |
             report
             automated issue
