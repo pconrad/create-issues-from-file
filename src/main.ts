@@ -6,14 +6,13 @@ import * as utils from './utils'
 import {inspect} from 'util'
 
 
-async function run(): Promise<void> {
+async function createIssueFromFile(contentFilepath: string): Promise<void> {
   try {
     const inputs = {
       token: core.getInput('token'),
       repository: core.getInput('repository'),
       issueNumber: Number(core.getInput('issue-number')),
       title: core.getInput('title'),
-      contentFilepath: core.getInput('content-filepath'),
       labels: utils.getInputAsArray('labels'),
       assignees: utils.getInputAsArray('assignees')
     }
@@ -25,9 +24,9 @@ async function run(): Promise<void> {
     const octokit = github.getOctokit(inputs.token)
 
     // Check the file exists
-    if (await util.promisify(fs.exists)(inputs.contentFilepath)) {
+    if (await util.promisify(fs.exists)(contentFilepath)) {
       // Fetch the file content
-      const fileContent = await fs.promises.readFile(inputs.contentFilepath, {
+      const fileContent = await fs.promises.readFile(contentFilepath, {
         encoding: 'utf8'
       })
 
@@ -80,12 +79,26 @@ async function run(): Promise<void> {
       // Set output
       core.setOutput('issue-number', issueNumber)
     } else {
-      core.info(`File not found at path '${inputs.contentFilepath}'`)
+      core.info(`File not found at path '${contentFilepath}'`)
     }
   } catch (error: any) {
     core.debug(inspect(error))
     core.setFailed(error.message)
   }
 }
+
+
+async function run(): Promise<void> {
+  try {
+    const inputs = {
+      contentFilepath: core.getInput('content-filepath')
+    }
+    createIssueFromFile(inputs.contentFilepath);
+  } catch (error: any) {
+    core.debug(inspect(error))
+    core.setFailed(error.message)
+  }
+}
+
 
 run()
